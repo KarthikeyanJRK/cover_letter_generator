@@ -7,3 +7,7 @@ rouge
 nltk
 numpy
 pandas
+pdfplumber
+pyresparser
+requests
+beautifulsoup4
