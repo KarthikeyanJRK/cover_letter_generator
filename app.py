@@ -2,7 +2,7 @@ import streamlit as st
 from transformers import BartTokenizer, TFBartForConditionalGeneration
 
 def load_model():
-    model_dir = 'C://Users//Malhan//Downloads//Bart_Model//bart_model//content//bart_model'
+    model_dir = 'KarthikeyanJRKIyer/cover_letter_generator'
     model = TFBartForConditionalGeneration.from_pretrained(model_dir)
     tokenizer = BartTokenizer.from_pretrained(model_dir)
     return model, tokenizer
