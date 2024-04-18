@@ -203,7 +203,7 @@ with col1:
         cover_letter_generated = generate_cover_letter(input_data)
         cover_letter_generated = cover_letter_generated.replace("Dear Hiring Manager,", "Dear Hiring Manager,\n\n")  # Ensure newlines are respected
         cover_letter_generated = cover_letter_generated.replace("Thank you for considering", "\n\nThank you for considering")
-        cover_letter_generated = cover_letter_generated.replace("Sincerely,", "\n\nSincerely\n\n,")
+        cover_letter_generated = cover_letter_generated.replace("Sincerely,", "\n\nSincerely,\n\n")
 
 with col2:
     #st.markdown(a4_css, unsafe_allow_html=True)
