@@ -1,7 +1,8 @@
+# Use an official Python runtime as a base image
 FROM python:3.11
 
-# Expose the port that Streamlit will run on
-EXPOSE 8501
+# Set the working directory to /app inside the container
+WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -10,20 +11,26 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory inside the container to /app
-WORKDIR /app
-
-# Copy all files from the current directory to /app in the container
+# Copy the local code to the container's workspace
 COPY . /app
 
-# Install Python dependencies from requirements.txt
-RUN pip3 install -r requirements.txt
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
 
-# Download NLTK data
+# Download necessary NLTK datasets
 RUN python -m nltk.downloader stopwords punkt averaged_perceptron_tagger wordnet omw-1.4
 
-# Download SpaCy English model
-RUN pip3 install spacy && python -m spacy download en_core_web_sm
+# Install SpaCy English model
+RUN pip install spacy && \
+    python -m spacy download en_core_web_sm
+
+# Install pyresparser and ensure the config file is in place if missing
+RUN pip install --force-reinstall pyresparser
+COPY config.cfg /usr/local/lib/python3.11/site-packages/pyresparser/ || echo "Config file not found in local directory, skipping copy."
+
+# Expose the port Streamlit will run on
+EXPOSE 8501
 
 # Set the default command to execute
 # when creating a new container from the image
