@@ -26,6 +26,10 @@ RUN python -m nltk.downloader stopwords punkt averaged_perceptron_tagger wordnet
 # Download SpaCy English model
 RUN python -m spacy download en_core_web_sm
 
+
+# Copy the config.cfg specifically for pyresparser into its package directory
+COPY config.cfg /usr/local/lib/python3.11/site-packages/pyresparser/config.cfg
+
 # Set the default command to execute
 # when creating a new container from the image
 ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
