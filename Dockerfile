@@ -16,19 +16,19 @@ WORKDIR /app
 # Copy all files from the current directory to /app in the container
 COPY . /app
 
-# Install Python dependencies from requirements.txt
-RUN pip install -r requirements.txt
+# Install specific Python packages as per requirements
+# Install nltk and specific version of spacy
+RUN pip install nltk
+RUN pip install spacy==2.3.5
 
-# Download NLTK data
-# Ensure this runs after pip installation to avoid errors
+# Install specific version of spacy model directly from URL
+RUN pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.3.1/en_core_web_sm-2.3.1.tar.gz
+
+# Install pyresparser
+RUN pip install pyresparser
+
+# Download necessary NLTK datasets
 RUN python -m nltk.downloader stopwords punkt averaged_perceptron_tagger wordnet omw-1.4
-
-# Download SpaCy English model
-RUN python -m spacy download en_core_web_sm
-
-
-# Copy the config.cfg specifically for pyresparser into its package directory
-COPY config.cfg /usr/local/lib/python3.11/site-packages/pyresparser/config.cfg
 
 # Set the default command to execute
 # when creating a new container from the image
