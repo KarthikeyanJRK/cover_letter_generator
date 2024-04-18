@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.8
 
 # Expose the port that Streamlit will run on
 EXPOSE 8501
@@ -16,7 +16,9 @@ WORKDIR /app
 # Copy all files from the current directory to /app in the container
 COPY . /app
 
-# Install specific Python packages as per requirements
+# Install Python dependencies from requirements.txt
+RUN pip install -r requirements.txt
+
 # Install nltk and specific version of spacy
 RUN pip install nltk
 RUN pip install spacy==2.3.5
@@ -33,4 +35,3 @@ RUN python -m nltk.downloader stopwords punkt averaged_perceptron_tagger wordnet
 # Set the default command to execute
 # when creating a new container from the image
 ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
-
