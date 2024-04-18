@@ -149,10 +149,13 @@ def extract_job_details(url):
             'Preferred Qualifications': []
         }
 
-# Initializations before user inputs
-job_title = ''
-hiring_company = ''
-preferred_qualifications = []
+# Initializations before user inputs using session state
+if 'job_title' not in st.session_state:
+    st.session_state['job_title'] = ''
+if 'hiring_company' not in st.session_state:
+    st.session_state['hiring_company'] = ''
+if 'preferred_qualifications' not in st.session_state:
+    st.session_state['preferred_qualifications'] = []
 cover_letter_generated = None  # Ensure it's initialized
 
 # Main content
@@ -161,16 +164,17 @@ col1, col2 = st.columns((1, 1))  # Adjust the ratio to your liking
 with col1:
     st.title('Cover Letter Generator')
     job_url = st.text_input("Enter Job Posting URL")
+    fetch_button = st.button("Fetch Job Details")
 
-    if job_url:
+    if fetch_button and job_url:
         job_details = extract_job_details(job_url)
-        job_title = job_details['Job Title']
-        hiring_company = job_details['Hiring Company']
-        preferred_qualifications = job_details['Preferred Qualifications']
+        st.session_state['job_title'] = job_details['Job Title']
+        st.session_state['hiring_company'] = job_details['Hiring Company']
+        st.session_state['preferred_qualifications'] = job_details['Preferred Qualifications']
 
-    job_title_area = st.text_input("Job Title:", value=job_title)
-    hiring_company_area = st.text_input("Hiring Company:", value=hiring_company)
-    preferred_qualifications_area = st.text_area("Preferred Qualifications:", value=', '.join(preferred_qualifications), height=100)
+    job_title_area = st.text_input("Job Title:", value=st.session_state['job_title'])
+    hiring_company_area = st.text_input("Hiring Company:", value=st.session_state['hiring_company'])
+    preferred_qualifications_area = st.text_area("Preferred Qualifications:", value=', '.join(st.session_state['preferred_qualifications']), height=100)
 
     uploaded_file = st.file_uploader("Upload Resume", type=['pdf'])
 
@@ -187,9 +191,9 @@ with col1:
         qualifications_list = []
 
     applicant_name = st.text_input("Applicant's Name", value=applicant_name)
-    past_experience = st.text_input('Past Working Experience', value=past_experience)
+    past_experience = st.text_area('Past Working Experience', value=past_experience, height=150)
     skillsets = st.text_input('Skillsets', value=skills)
-    qualifications = st.text_area('Qualifications', value=' '.join(qualifications_list), height=100)
+    qualifications = st.text_area('Qualifications', value=' '.join(qualifications_list), height=150)
 
     if st.button('Generate Cover Letter'):
         input_data = f"Job Title: {job_title_area}, Hiring Company: {hiring_company_area}, " \
@@ -199,7 +203,7 @@ with col1:
         cover_letter_generated = generate_cover_letter(input_data)
         cover_letter_generated = cover_letter_generated.replace("Dear Hiring Manager,", "Dear Hiring Manager,\n\n")  # Ensure newlines are respected
         cover_letter_generated = cover_letter_generated.replace("Thank you for considering", "\n\nThank you for considering")
-        cover_letter_generated = cover_letter_generated.replace("Sincerely,", "\n\nSincerely,\n\n")
+        cover_letter_generated = cover_letter_generated.replace("Sincerely,", "\n\nSincerely\n\n,")
 
 with col2:
     #st.markdown(a4_css, unsafe_allow_html=True)
@@ -210,7 +214,7 @@ with col2:
         st.markdown("## Instructions")
         st.markdown("""
         - **Step 1:** Enter the job posting URL in the field on the left.
-        - **Step 2:** The job title, company, and preferred qualifications will be fetched automatically.
+        - **Step 2:** Click the 'Fetch Job Details' button to load the job title, company, and preferred qualifications.
         - **Step 3:** Upload your resume in PDF format.
         - **Step 4:** Verify and edit your details such as name, past experience, skillsets, and qualifications.
         - **Step 5:** Click the 'Generate Cover Letter' button.
@@ -222,5 +226,3 @@ with col2:
         - Customize the generated cover letter further if needed to add a personal touch.
         - Double-check for any typos or errors in the final cover letter before using it.
         """)
-
-# Ensure all the functions are included as per your original code and any additional logic you require.
