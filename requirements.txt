@@ -1,3 +1,9 @@
 streamlit
 transformers
 tensorflow
+tf-keras
+sacrebleu
+rouge
+nltk
+numpy
+pandas
