@@ -84,47 +84,66 @@ def extract_job_details(url):
 
 # Streamlit UI setup
 st.title('Cover Letter Generator')
+
+# Initialize variables
+job_title = ''
+hiring_company = ''
+preferred_qualifications = []
+
+# Input for job posting URL
 job_url = st.text_input("Enter Job Posting URL")
 
 # Fetch job details if URL is entered
-job_details = {}
 if job_url:
     job_details = extract_job_details(job_url)
-    job_title = job_details.get('Job Title', 'Not found')
-    hiring_company = job_details.get('Hiring Company', 'Not found')
-    preferred_qualifications = ', '.join(job_details.get('Preferred Qualifications', []))
-else:
-    job_title = ''
-    hiring_company = ''
-    preferred_qualifications = ''
+    job_title = job_details.get('Job Title', '')
+    hiring_company = job_details.get('Hiring Company', '')
+    preferred_qualifications = job_details.get('Preferred Qualifications', [])
 
 # Display fetched job details
-st.write("Job Title:", job_title)
-st.write("Hiring Company:", hiring_company)
-st.write("Preferred Qualifications:", preferred_qualifications)
+job_title_area = st.text_input("Job Title:", value=job_title)
+hiring_company_area = st.text_input("Hiring Company:", value=hiring_company)
+preferred_qualifications_area = st.text_input("Preferred Qualifications:", value=', '.join(preferred_qualifications))
 
+# Upload resume PDF
 uploaded_file = st.file_uploader("Upload Resume", type=['pdf'])
 
+# Parse uploaded resume
 if uploaded_file is not None:
     resume_data = parse_resume(uploaded_file)
     applicant_name = resume_data.get('name', '')
     past_experience = ' '.join(resume_data.get('experience', []))
     skills = ', '.join(resume_data.get('skills', []))
-    qualifications = ' '.join(resume_data.get('qualification', []))
+    qualifications_list = resume_data.get('qualification', [])
 else:
     applicant_name = ''
     past_experience = ''
     skills = ''
-    qualifications = ''
+    qualifications_list = []
 
+# Input for applicant's name
 applicant_name = st.text_input("Applicant's Name", value=applicant_name)
-past_experience = st.text_input('Past Working Experience', value=past_experience)
-current_experience = st.text_input('Current Working Experience')
-skillsets = st.text_input('Skillsets', value=skills)
-qualifications = st.text_input('Qualifications', value=qualifications)
 
+# Input for past working experience
+past_experience = st.text_input('Past Working Experience', value=past_experience)
+
+# Input for skillsets
+skillsets = st.text_input('Skillsets', value=skills)
+
+# Input for qualifications
+qualifications = st.text_input('Qualifications', value=' '.join(qualifications_list))
+
+# Button to generate cover letter
 if st.button('Generate Cover Letter'):
-    input_data = f"Job Title: {job_title}, Preferred Qualifications: {preferred_qualifications}, Hiring Company: {hiring_company}, Applicant Name: {applicant_name}, Past Working Experience: {past_experience}, Current Working Experience: {current_experience}, Skillsets: {skillsets}, Qualifications: {qualifications}"
+    # Use the text area inputs in case they have been modified
+    job_title = job_title_area
+    hiring_company = hiring_company_area
+    preferred_qualifications = preferred_qualifications_area.split(', ')
+    
+    input_data = f"Job Title: {job_title}, Preferred Qualifications: {', '.join(preferred_qualifications)}, " \
+                 f"Hiring Company: {hiring_company}, Applicant Name: {applicant_name}, " \
+                 f"Past Working Experience: {past_experience}, Skillsets: {skillsets}, " \
+                 f"Qualifications: {qualifications}"
     cover_letter = generate_cover_letter(input_data)
     cover_letter = cover_letter.replace("Dear Hiring Manager,", "Dear Hiring Manager,\n")
     cover_letter = cover_letter.replace("Thank you for considering", "\nThank you for considering")
