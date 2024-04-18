@@ -11,3 +11,4 @@ pdfplumber
 pyresparser
 requests
 beautifulsoup4
+spacy
